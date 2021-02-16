@@ -5,35 +5,13 @@
 #include <TlHelp32.h>
 #include "mem.h"
 #include "proc.h"
+#include "classe_reclass.h"
 
 
-/*
-
-                unsigned char szPatch_inverser[39] = { 0x76,0x1C,0x0F,0x2E,0xEC,0xBA,0x01,0x00,0x00,0x00,0x0F,0x9A,0xC0,0x0F,0x45,0xC2,0x84,0xC0,0x74,0x0A,0xC7,0x81,0x5c, 0x01, 0x00, 0x00, 0x00, 0x00 , 0x00,0x40, 0x0F,0x2E,0xCA,0x0F,0x87, 0xE2, 0x00, 0x00, 0x00 };
-                unsigned char szPatch[39] = { 0x00, 0x00, 0x00, 0xE2, 0x87, 0x0F, 0xCA, 0x2E, 0x0F, 0x40,0x00,0x00,0x00,0x00,0x00,0x01,0x5c,0x81,0xC7,0x0A,0x74,0xC0,0x84,0xC2,0x45,0x0F,0xC0,0x9A,0x0F,0x00,0x00,0x00,0x01,0xBA,0xEC,0x2E,0x0F,0x1C,0x76 };
-                char Crew_health_enable = (char)"\x00\x00\x00\xE2\x87\x0F\xCA\x2E\x0F\x40\x00\x00\x00\x00\x00\x01\x5c\x81\xC7\x0A\x74\xC0\x84\xC2\x45\x0F\xC0\x9A\x0F\x00\x00\x00\x01\xBA\xEC\x2E\x0F\x1C\x76"; // nombre = 39
-                unsigned char szpatch[5] = { 0xF3, 0x0F, 0x11 ,0x69 ,0x28 };
-                mem::Patch((BYTE*)(hookAddress), (BYTE*)"\x76\x1C\x0F\x2E\xEC\xBA\x01\x00\x00\x00\x0F\x9A\xC0\x0F\x45\xC2\x84\xC0\x74\x0A\xC7\x81\x5c\x01\x00\x00\x00\x00\x00\x40\x0F\x2E\xCA\x0F\x87\xE2\x00\x00\x00", 39);
-                */
-
-
-
-
-/*
-"FTLGame.exe"+6EB4A: F3 0F 2C F0                    -  cvttss2si esi,xmm0
-"FTLGame.exe"+6EB4E: F3 0F 58 C2                    -  addss xmm0,xmm2
-"FTLGame.exe"+6EB52: F3 0F 10 1D 10 CB 4A 01        -  movss xmm3,[FTLGame.exe+42CB10]
-"FTLGame.exe"+6EB5A: F3 0F 10 61 2C                 -  movss xmm4,[ecx+2C]
-"FTLGame.exe"+6EB5F: 0F 54 DA                       -  andps xmm3,xmm2
-"FTLGame.exe"+6EB62: 0F 28 EC                       -  movaps xmm5,xmm4
-"FTLGame.exe"+6EB65: F3 0F 5F C1                    -  maxss xmm0,xmm1
-"FTLGame.exe"+6EB69: 0F 2E D9                       -  ucomiss xmm3,xmm1
-"FTLGame.exe"+6EB6C: F3 0F 5D E8                    -  minss xmm5,xmm0
-"FTLGame.exe"+6EB70: 0F 28 C5  code pour enlever l'injection*/ 
-
+/
 DWORD jmpBackAddycrew;
 DWORD jmpBackAddyWeapon;
-
+//ORD_PTR multiplier = 0x000007D0;
 
 void __declspec(naked) Functcrew() {
     __asm {
@@ -49,56 +27,6 @@ void __declspec(naked) Functcrew() {
     }
 }
 
-
-void __declspec() FunctWeapon() {
-   
-    //penser a bien ouvrir la bonne cheat table verifier l'activation des script pour savoir si c'est la bonne
-    //DWORD_PTR multiplier = 1.0f;
-    // tester mov xmm5, test |
-    // addss xmm0, test      | deja tester
-    // mettre dword ptr sur cmp (ou pas ?)
-    // retester tout depuis le début parceque un reglage avait été mal fait
-
-    /* fonction qui ne fait pas crasher le jeu et qui n'empeche pas les armes de se charger
-    cmp dword ptr[esp + 410], 0x7562656E; //Blaze it. 90775A73
-    jne weapon
-    addss xmm0, ss: [0x50f] ;// fonctionne pas pose vraisemblablement probleme
-    weapon:
-    mulss xmm0, xmm1
-    addss xmm0, [esi + 0x8]
-    jmp[jmpBackAddyWeapon]
-    */
-
-    /*cmp dword ptr ss:[esp+0x410], 0x7562656E //Blaze it. 90775A73
-        jne weapon
-        addss xmm0, ds:[0x1] //dword ptr ds:[multiplier] // fonctionne pas pose vraisemblablement probleme 
-        weapon:
-        mulss xmm0, xmm1
-        addss xmm0, dword ptr ds:[esi+8]
-        jmp[jmpBackAddyWeapon]*/
-     DWORD register addressregister;
-    //__asm mov registerValue , dword ptr [xmm0];
-    
-     
-    std::cout << "addressregister : " <<  &addressregister << std::endl;
-    std::cout << "addressregister2 : " << addressregister << std::endl;
-    Sleep(10000);
-
-    
-    __asm {
-        
-        
-        
-        
-
-
-           
-
-       
-        
-       
-    }
-}
 
 
 DWORD WINAPI HackThread(HMODULE hModule) {
@@ -116,8 +44,8 @@ DWORD WINAPI HackThread(HMODULE hModule) {
     std::cout << "Press F7 for infinite Drone part" << std::endl;
     std::cout << "Press F8 to destroy enemy ship " << std::endl;
     std::cout << "Press F9 for infinite weapon energy" << std::endl;
-    std::cout << "Press F10 for" << std::endl;
-    std::cout << "Press F11 for" << std::endl;
+    std::cout << "Press F10 for instantly refill ftl charge" << std::endl;
+    std::cout << "press insert to kill enemy crew" << std::endl;
     std::cout << "Press F12 to exit" << std::endl;
     
 
@@ -125,8 +53,10 @@ DWORD WINAPI HackThread(HMODULE hModule) {
     //get module base
     uintptr_t moduleBase = (uintptr_t)GetModuleHandle(L"FTLGame.exe");
     
-    bool bHealth = false, bMoney = false, bCrew = false, bShield = false, bWeapon = false;
-
+    bool bHealth = false, bCrew = false;
+    entList_class* entlistclass = *(entList_class**)(moduleBase + 0x514E4C);
+    Local_Player* LocalPlayerClass = *(Local_Player**)(moduleBase + 0x51348C);
+    
     //hack loop
     while (true) {
         if (GetAsyncKeyState(VK_F12) & 1) {
@@ -138,7 +68,7 @@ DWORD WINAPI HackThread(HMODULE hModule) {
         }
 
         if (GetAsyncKeyState(VK_F2) & 1) {
-            bMoney = !bMoney;
+            LocalPlayerClass->scrap = 99999;
         }
 
         if (GetAsyncKeyState(VK_F3) & 1) {
@@ -153,9 +83,6 @@ DWORD WINAPI HackThread(HMODULE hModule) {
                 MODULEINFO module_size = mem::GetModuleInfo((char*)"FTLGame.exe");
                 DWORD hookAddress = moduleBase + 0x7A300;
                 
-                //char hookAddress = 'a';//mem::ScanInternal((char*)pattern,(char*)mask,(char*)module_size.EntryPoint,hooklenght);
-                //DWORD hookAddress = mem::FindPattern("FTLGame.exe", "\xCC\x0F\x11\x69\x28","xxxxx" );
-                //const void* hookAddress = mem::FindPattern((const void*)module_size.EntryPoint,module_size.SizeOfImage, (const BYTE*)pattern, mask);
                 std::cout << "jmpback addy" << std::endl;
                 jmpBackAddycrew = hookAddress  + 0x5;
                 std::cout << jmpBackAddycrew << std::endl;
@@ -165,8 +92,7 @@ DWORD WINAPI HackThread(HMODULE hModule) {
                 std::cout << "hookadress :  " << hookAddress << " function to hook :" << Functcrew << " hooklenght " << hooklenght << std::endl;
                 
                 mem::Hook((void*)hookAddress,(void*)Functcrew,hooklenght);
-                //mem::Patch((BYTE*)0x00E8A300, (BYTE*)"/xE9/xFB/x5C/x1E/x01/x", 5);
-                //mem::PlaceJMP((BYTE*)0x00E8A300, (DWORD)Functcrew);
+                
 
 
 
@@ -174,12 +100,7 @@ DWORD WINAPI HackThread(HMODULE hModule) {
 
 
 
-            } //autre facon d'ecrire : \x76\x1C\x0F\x2E\xEC\xBA\x01\x00\x00\x00\x0F\x9A\xC0\x0F\x45\xC2\x84\xC0\x74\x0A\xC7\x81\x5c\x01\x00\x00\x00\x00\x00\x40\x0F\x2E\xCA\x0F\x87\xE2\x00\x00\x00
-            /*
-            else {
-                mem::Patch((BYTE*)(moduleBase + 0x63786), (BYTE*)"",0);
-            }
-            */
+            } 
         }
 
         if (GetAsyncKeyState(VK_F4) & 1) {
@@ -189,9 +110,7 @@ DWORD WINAPI HackThread(HMODULE hModule) {
         }
 
         if (GetAsyncKeyState(VK_F5) & 1) {
-            uintptr_t fuel_addr = mem::FindDMAaddy(moduleBase + 0x0051348C, { 0x494 });
-            int* fuel = (int*)fuel_addr;
-            *fuel  = 99999;
+            LocalPlayerClass->fuel = 9999;
         }
         if (GetAsyncKeyState(VK_F6) & 1) {
             uintptr_t missile_addr = mem::FindDMAaddy(moduleBase + 0x0005134A4, { 0x0, 0x48, 0x1E8 });
@@ -199,10 +118,11 @@ DWORD WINAPI HackThread(HMODULE hModule) {
             *missile = 99999;
         }
         if (GetAsyncKeyState(VK_F7) & 1) {
-            uintptr_t Drone_part_addr = mem::FindDMAaddy(moduleBase + 0x51348C, {0x4C,0x1CC});
-            int* drone_part = (int*)Drone_part_addr;
-            *drone_part = 999;
-            //TODO add infinite drone part
+            LocalPlayerClass->drones = 9999;
+
+
+
+           
         }
 
         if (GetAsyncKeyState(VK_F8) & 1) {
@@ -217,63 +137,42 @@ DWORD WINAPI HackThread(HMODULE hModule) {
         }
 
         if (GetAsyncKeyState(VK_F10) & 1) {
-            bShield = !bShield;
-            
+            LocalPlayerClass->ftl_drive = LocalPlayerClass->ftl_drive_max;
             
 
         }
-        
-        if (GetAsyncKeyState(VK_MULTIPLY) & 1) {
-            bWeapon = !bWeapon;
-            const char* pattern_weapon = "";
-            const char* pattern_unhooking = "";
-            const char* mask_weapon = "";
-            intptr_t scan_size = 0x46e000;
-            //intptr_t scan_size = 9; pas bon (je pense)
-            MODULEINFO module_info = mem::GetModuleInfo((char*)"FTLGame.exe");
 
-            char* address_weapon = mem::ScanInternal((char*)pattern_weapon, (char*)mask_weapon, (char*)moduleBase, scan_size);
-            //char* address_unhooking = mem::ScanInternal((char*)pattern_unhooking, (char*))
-            jmpBackAddyWeapon = (DWORD)address_weapon + 9;
-            if (bWeapon) {
-                
-                std::cout << address_weapon << std::endl;
-                mem::Hook((void*)address_weapon, (void*)FunctWeapon, 9);
-                std::cout << "hook complete" << std::endl;
-
-
-            }
-            else {
-                std::cout << "unhooking weapon" << std::endl;
-                mem::Patch((BYTE*)address_weapon, (BYTE*)pattern_unhooking, 25);
-                std::cout << "unhooking terminated " << std::endl;
+        if (GetAsyncKeyState(VK_INSERT) & 1 ){
+            
+            for (auto e : entlistclass->EntList) {
+                if (IsBadReadPtr(e ,sizeof(e))){
+                    break;
+                }
+                if (e->is_enemy) {
+                    e->health = 0;
+                }
+                else {
+                    std::cout << "not an enemy" << std::endl;
+                }
             }
         }
+
         
-        if (bHealth || bMoney || bShield) {
+       
+        
+        if (bHealth ||  bShield ) {
             if (bHealth) {
-                uintptr_t localPlayerPtr = mem::FindDMAaddy(moduleBase + 0x51348C, { 0xCC });
-                int* ally_hull = (int*)localPlayerPtr;
-                *ally_hull = 30;
+                LocalPlayerClass->health = 30;
                 //std::cout << "Infinite life activated " << std::endl;
             }
 
-            if (bMoney) {
-                uintptr_t ammoAddr = mem::FindDMAaddy(moduleBase + 0x51348C, { 0x4D4});
-                int* ammo = (int*)ammoAddr;
-                *ammo = 999999;
-
-                //std::cout << "infinite money acctivated" << std::endl;
-
-                //or 
-               //*(int*) mem::FindDMAAddy(moduleBase + 0x10f4f4, { 0x374,0x14,0x0 }) = 1337;
-            }
             
             if (bShield) {
                 uintptr_t shield_power_addr = mem::FindDMAaddy(moduleBase + 0x51348C, { 0x44 ,0x1F0 });
                 int* shield_power = (int*)shield_power_addr;
                 *shield_power = 5;
             }
+
 
         }
         Sleep(100);

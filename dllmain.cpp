@@ -8,10 +8,10 @@
 #include "classe_reclass.h"
 
 
-
+/
 DWORD jmpBackAddycrew;
 DWORD jmpBackAddyWeapon;
-
+//ORD_PTR multiplier = 0x000007D0;
 
 void __declspec(naked) Functcrew() {
     __asm {
@@ -44,7 +44,8 @@ DWORD WINAPI HackThread(HMODULE hModule) {
     std::cout << "Press F7 for infinite Drone part" << std::endl;
     std::cout << "Press F8 to destroy enemy ship " << std::endl;
     std::cout << "Press F9 for infinite weapon energy" << std::endl;
-    std::cout << " press insert to kill enemy crew" << std::endl;
+    std::cout << "Press F10 for instantly refill ftl charge" << std::endl;
+    std::cout << "press insert to kill enemy crew" << std::endl;
     std::cout << "Press F12 to exit" << std::endl;
     
 
@@ -52,8 +53,10 @@ DWORD WINAPI HackThread(HMODULE hModule) {
     //get module base
     uintptr_t moduleBase = (uintptr_t)GetModuleHandle(L"FTLGame.exe");
     
-    bool bHealth = false, bMoney = false, bCrew = false;
-
+    bool bHealth = false, bCrew = false;
+    entList_class* entlistclass = *(entList_class**)(moduleBase + 0x514E4C);
+    Local_Player* LocalPlayerClass = *(Local_Player**)(moduleBase + 0x51348C);
+    
     //hack loop
     while (true) {
         if (GetAsyncKeyState(VK_F12) & 1) {
@@ -65,7 +68,7 @@ DWORD WINAPI HackThread(HMODULE hModule) {
         }
 
         if (GetAsyncKeyState(VK_F2) & 1) {
-            bMoney = !bMoney;
+            LocalPlayerClass->scrap = 99999;
         }
 
         if (GetAsyncKeyState(VK_F3) & 1) {
@@ -80,7 +83,6 @@ DWORD WINAPI HackThread(HMODULE hModule) {
                 MODULEINFO module_size = mem::GetModuleInfo((char*)"FTLGame.exe");
                 DWORD hookAddress = moduleBase + 0x7A300;
                 
-               
                 std::cout << "jmpback addy" << std::endl;
                 jmpBackAddycrew = hookAddress  + 0x5;
                 std::cout << jmpBackAddycrew << std::endl;
@@ -108,9 +110,7 @@ DWORD WINAPI HackThread(HMODULE hModule) {
         }
 
         if (GetAsyncKeyState(VK_F5) & 1) {
-            uintptr_t fuel_addr = mem::FindDMAaddy(moduleBase + 0x0051348C, { 0x494 });
-            int* fuel = (int*)fuel_addr;
-            *fuel  = 99999;
+            LocalPlayerClass->fuel = 9999;
         }
         if (GetAsyncKeyState(VK_F6) & 1) {
             uintptr_t missile_addr = mem::FindDMAaddy(moduleBase + 0x0005134A4, { 0x0, 0x48, 0x1E8 });
@@ -118,10 +118,11 @@ DWORD WINAPI HackThread(HMODULE hModule) {
             *missile = 99999;
         }
         if (GetAsyncKeyState(VK_F7) & 1) {
-            uintptr_t Drone_part_addr = mem::FindDMAaddy(moduleBase + 0x51348C, {0x4C,0x1CC});
-            int* drone_part = (int*)Drone_part_addr;
-            *drone_part = 999;
-            //TODO add infinite drone part
+            LocalPlayerClass->drones = 9999;
+
+
+
+           
         }
 
         if (GetAsyncKeyState(VK_F8) & 1) {
@@ -135,8 +136,14 @@ DWORD WINAPI HackThread(HMODULE hModule) {
             *weapon_energy = 30;
         }
 
+        if (GetAsyncKeyState(VK_F10) & 1) {
+            LocalPlayerClass->ftl_drive = LocalPlayerClass->ftl_drive_max;
+            
+
+        }
+
         if (GetAsyncKeyState(VK_INSERT) & 1 ){
-            entList_class* entlistclass = *(entList_class**)(moduleBase + 0x514E4C);
+            
             for (auto e : entlistclass->EntList) {
                 if (IsBadReadPtr(e ,sizeof(e))){
                     break;
@@ -151,26 +158,21 @@ DWORD WINAPI HackThread(HMODULE hModule) {
         }
 
         
-      
+       
         
-        if (bHealth || bMoney ) {
+        if (bHealth ||  bShield ) {
             if (bHealth) {
-                uintptr_t localPlayerPtr = mem::FindDMAaddy(moduleBase + 0x51348C, { 0xCC });
-                int* ally_hull = (int*)localPlayerPtr;
-                *ally_hull = 30;
-                std::cout << "Infinite life activated " << std::endl;
+                LocalPlayerClass->health = 30;
+                //std::cout << "Infinite life activated " << std::endl;
             }
 
-            if (bMoney) {
-                uintptr_t ammoAddr = mem::FindDMAaddy(moduleBase + 0x51348C, { 0x4D4});
-                int* ammo = (int*)ammoAddr;
-                *ammo = 999999;
-                std::cout << " infinite money !! " << std::endl;
-               
-            }
             
-           
+            if (bShield) {
+                uintptr_t shield_power_addr = mem::FindDMAaddy(moduleBase + 0x51348C, { 0x44 ,0x1F0 });
+                int* shield_power = (int*)shield_power_addr;
+                *shield_power = 5;
             }
+
 
         }
         Sleep(100);

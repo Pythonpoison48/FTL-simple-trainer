@@ -9,9 +9,9 @@ New features are comming.
 
 it's a dll so you need a dll injector.I use guided hacking injector but you can try on other injector (but I haven't tested them)
 
-FEATURES:
+FEATURES
 
-  Press F1 for infinite health
+Press F1 for infinite health
   Press F2 for infinite money
   Press F3 for crew invincibility
   Press F4 for infinite energy
